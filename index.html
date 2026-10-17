@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diferença em Horas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0f1c1a;
+      --bg-mid: #1a3330;
+      --ink: #e8f0ee;
+      --ink-muted: #9bb5b0;
+      --accent: #3dba9a;
+      --accent-hover: #4fd4b0;
+      --danger: #e07a6a;
+      --danger-hover: #f08a7a;
+      --field-bg: rgba(15, 28, 26, 0.55);
+      --field-border: rgba(157, 196, 188, 0.28);
+      --glow: rgba(61, 186, 154, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(61, 186, 154, 0.18), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 90% 80%, rgba(45, 120, 140, 0.22), transparent 50%),
+        linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #122826 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 32px 72px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239dc4bc' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(1080px, 100%);
+      animation: rise 0.55s ease-out both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-header {
+      margin-bottom: 2.25rem;
+    }
+
+    h1 {
+      font-family: "Outfit", sans-serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      color: var(--ink-muted);
+      font-size: 1rem;
+      max-width: 60ch;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .calc-panel {
+      min-width: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    input[type="text"] {
+      font-family: "Outfit", sans-serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--ink);
+      background: var(--field-bg);
+      border: 1px solid var(--field-border);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(155, 181, 176, 0.45);
+      font-weight: 400;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      font-family: "Outfit", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border: none;
+      border-radius: 6px;
+      padding: 0.95rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease, opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      flex: 1;
+      color: var(--bg-deep);
+      background: var(--accent);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      flex: 1;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--field-border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-delete {
+      flex: 0 0 auto;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.7rem;
+      color: var(--danger);
+      background: transparent;
+      border: 1px solid rgba(224, 122, 106, 0.35);
+    }
+
+    .btn-delete:hover:not(:disabled) {
+      border-color: var(--danger);
+      background: rgba(224, 122, 106, 0.12);
+      color: var(--danger-hover);
+    }
+
+    .btn-tiny {
+      flex: 0 0 auto;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.7rem;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--field-border);
+    }
+
+    .btn-tiny:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      min-width: 6.25rem;
+      transition: border-color 0.35s ease, color 0.35s ease, background 0.35s ease;
+    }
+
+    .btn-copy svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .btn-copy[data-copy-state="copied"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(61, 186, 154, 0.12);
+    }
+
+    .btn-copy[data-copy-state="error"] {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(224, 122, 106, 0.12);
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--field-border);
+    }
+
+    .result-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .result-value {
+      font-family: "Outfit", sans-serif;
+      font-size: 2.35rem;
+      font-weight: 600;
+      color: var(--accent);
+      animation: fadeIn 0.35s ease-out both;
+    }
+
+    .result-error {
+      font-size: 1rem;
+      color: var(--danger);
+      animation: fadeIn 0.35s ease-out both;
+    }
+
+    .result:empty {
+      display: none;
+    }
+
+    .stored-section {
+      min-width: 0;
+      padding-left: 3rem;
+      border-left: 1px solid var(--field-border);
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+    }
+
+    .stored-header,
+    .groups-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .stored-header h2,
+    .groups-header h2 {
+      font-family: "Outfit", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+
+    .stored-count,
+    .groups-count {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+    }
+
+    .stored-list,
+    .group-entries {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+      flex: 1;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 0.35rem;
+    }
+
+    .stored-list:empty::after {
+      content: "Nenhuma diferença armazenada ainda.";
+      color: rgba(155, 181, 176, 0.55);
+      font-size: 0.95rem;
+    }
+
+    .stored-list li,
+    .group-entries li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(157, 196, 188, 0.12);
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      animation: fadeIn 0.3s ease-out both;
+    }
+
+    .group-entries li {
+      grid-template-columns: auto 1fr;
+    }
+
+    .entry-hours {
+      color: var(--ink);
+      font-weight: 500;
+      justify-self: end;
+    }
+
+    .entry-meta {
+      font-size: 0.75rem;
+      color: rgba(155, 181, 176, 0.55);
+      grid-column: 1 / -1;
+      margin-top: -0.15rem;
+    }
+
+    .stored-actions {
+      margin-top: auto;
+    }
+
+    .average-box {
+      margin-top: 1.25rem;
+      animation: fadeIn 0.35s ease-out both;
+    }
+
+    .average-box:empty {
+      display: none;
+    }
+
+    .groups-section {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--field-border);
+    }
+
+    .groups-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .groups-list:empty::after {
+      content: "Nenhum grupo salvo ainda. Monte uma lista à direita e clique em “Salvar grupo”.";
+      color: rgba(155, 181, 176, 0.55);
+      font-size: 0.95rem;
+    }
+
+    .group-card {
+      border: 1px solid var(--field-border);
+      border-radius: 8px;
+      padding: 1rem 1.15rem;
+      background: rgba(15, 28, 26, 0.35);
+      animation: fadeIn 0.3s ease-out both;
+    }
+
+    .group-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .group-name {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .group-summary {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+
+    .group-actions {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.45rem;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .group-actions .btn-tiny,
+    .group-actions .btn-delete {
+      white-space: nowrap;
+      padding: 0.35rem 0.6rem;
+    }
+
+    .group-details {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(157, 196, 188, 0.15);
+    }
+
+    .group-details[hidden] {
+      display: none;
+    }
+
+    .group-details .group-entries {
+      max-height: 220px;
+      margin-bottom: 0;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: rgba(155, 181, 176, 0.55);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      margin-top: 0.15rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="page-header">
+      <h1>Diferença em Horas</h1>
+      <p class="subtitle">Informe duas datas em um destes formatos: <strong>mm-dd-yy hh:mm</strong> ou <strong>hh:mm dd/mm/yy</strong>. Salve um grupo com nome para consultar depois — tudo fica neste navegador.</p>
+    </header>
+
+    <div class="layout">
+      <div class="calc-panel">
+        <form id="calc-form" novalidate>
+          <label>
+            Data 1
+            <input
+              type="text"
+              id="date1"
+              name="date1"
+              placeholder="14:03 30/09/26"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <span class="hint">mm-dd-yy hh:mm · hh:mm dd/mm/yy</span>
+          </label>
+
+          <label>
+            Data 2
+            <input
+              type="text"
+              id="date2"
+              name="date2"
+              placeholder="18:30 30/09/26"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <span class="hint">mm-dd-yy hh:mm · hh:mm dd/mm/yy</span>
+          </label>
+
+          <div class="btn-row">
+            <button type="submit" class="btn-primary">Calcular</button>
+            <button type="button" class="btn-secondary" id="store-btn" disabled>Armazenar</button>
+          </div>
+        </form>
+
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+
+      <section class="stored-section" aria-label="Diferenças armazenadas">
+        <div class="stored-header">
+          <h2>Armazenadas</h2>
+          <span class="stored-count" id="stored-count">0</span>
+        </div>
+        <ul class="stored-list" id="stored-list"></ul>
+        <div class="stored-actions">
+          <div class="btn-row">
+            <button type="button" class="btn-primary" id="average-btn" disabled>Média aritmética</button>
+            <button type="button" class="btn-secondary" id="save-group-btn" disabled>Salvar grupo</button>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn-secondary" id="undo-btn" disabled>Desfazer excluir</button>
+            <button type="button" class="btn-secondary" id="clear-btn" disabled>Limpar histórico</button>
+          </div>
+          <div class="average-box" id="average-box" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="groups-section" aria-label="Grupos salvos">
+      <div class="groups-header">
+        <h2>Grupos salvos</h2>
+        <span class="groups-count" id="groups-count">0</span>
+      </div>
+      <ul class="groups-list" id="groups-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    const US_PATTERN = /^(\d{2})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})$/;
+    const BR_PATTERN = /^(\d{2}):(\d{2})\s+(\d{2})\/(\d{2})\/(\d{2})$/;
+    const ENTRIES_KEY = "date-hours-calculator:entries";
+    const GROUPS_KEY = "date-hours-calculator:groups";
+
+    function buildDate(year, month, day, hour, minute) {
+      if (month < 1 || month > 12) return null;
+      if (day < 1 || day > 31) return null;
+      if (hour > 23 || minute > 59) return null;
+
+      const date = new Date(year, month - 1, day, hour, minute, 0, 0);
+
+      if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day ||
+        date.getHours() !== hour ||
+        date.getMinutes() !== minute
+      ) {
+        return null;
+      }
+
+      return date;
+    }
+
+    function parseDateTime(value) {
+      const trimmed = value.trim();
+
+      const usMatch = US_PATTERN.exec(trimmed);
+      if (usMatch) {
+        const month = Number(usMatch[1]);
+        const day = Number(usMatch[2]);
+        const year = 2000 + Number(usMatch[3]);
+        const hour = Number(usMatch[4]);
+        const minute = Number(usMatch[5]);
+        return buildDate(year, month, day, hour, minute);
+      }
+
+      const brMatch = BR_PATTERN.exec(trimmed);
+      if (brMatch) {
+        const hour = Number(brMatch[1]);
+        const minute = Number(brMatch[2]);
+        const day = Number(brMatch[3]);
+        const month = Number(brMatch[4]);
+        const year = 2000 + Number(brMatch[5]);
+        return buildDate(year, month, day, hour, minute);
+      }
+
+      return null;
+    }
+
+    function formatHours(hours) {
+      if (Number.isInteger(hours)) {
+        return `${hours} h`;
+      }
+      const rounded = Math.round(hours * 100) / 100;
+      return `${rounded} h`;
+    }
+
+    function formatSavedAt(iso, locale = "pt-BR") {
+      try {
+        return new Date(iso).toLocaleString(locale, {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
+      } catch {
+        return iso;
+      }
+    }
+
+    function toTelegramBold(text) {
+      return Array.from(text, (char) => {
+        const code = char.codePointAt(0);
+        if (code >= 65 && code <= 90) {
+          return String.fromCodePoint(0x1d400 + (code - 65));
+        }
+        if (code >= 97 && code <= 122) {
+          return String.fromCodePoint(0x1d41a + (code - 97));
+        }
+        if (code >= 48 && code <= 57) {
+          return String.fromCodePoint(0x1d7ce + (code - 48));
+        }
+        return char;
+      }).join("");
+    }
+
+    function buildGroupText(group) {
+      const averageLine = toTelegramBold(`AVERAGE: ${formatHours(group.average)}`);
+
+      const lines = [
+        `Group: ${group.name}`,
+        `Saved at: ${formatSavedAt(group.savedAt, "en-US")}`,
+        `Games checked: ${group.entries.length}`,
+        "",
+        averageLine,
+        "",
+      ];
+
+      group.entries.forEach((entry, index) => {
+        lines.push(`#${index + 1}  ${formatHours(entry.hours)}`);
+      });
+
+      return lines.join("\n");
+    }
+
+    function sanitizeFileName(name) {
+      const cleaned = name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 60);
+      return cleaned || "grupo";
+    }
+
+    function exportGroupTxt(group) {
+      const text = buildGroupText(group);
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${sanitizeFileName(group.name)}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function writeClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        try {
+          const area = document.createElement("textarea");
+          area.value = text;
+          area.setAttribute("readonly", "");
+          area.style.position = "fixed";
+          area.style.left = "-9999px";
+          document.body.appendChild(area);
+          area.select();
+          const ok = document.execCommand("copy");
+          area.remove();
+          return ok;
+        } catch {
+          return false;
+        }
+      }
+    }
+
+    function iconSvg(paths) {
+      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+    }
+
+    const ICONS = {
+      copy: iconSvg(
+        '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>'
+      ),
+      check: iconSvg('<path d="M4 12l5 5L20 6"></path>'),
+      alert: iconSvg(
+        '<circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line>'
+      ),
+    };
+
+    function setCopyButtonContent(button, state) {
+      if (state === "copied") {
+        button.innerHTML = `${ICONS.check}<span>Copiado</span>`;
+        return;
+      }
+      if (state === "error") {
+        button.innerHTML = `${ICONS.alert}<span>Falhou</span>`;
+        return;
+      }
+      button.innerHTML = `${ICONS.copy}<span>Copiar</span>`;
+    }
+
+    function showCopyFeedback(button, state) {
+      if (!button) return;
+      window.clearTimeout(button._copyTimer);
+      button.dataset.copyState = state;
+      setCopyButtonContent(button, state);
+      button._copyTimer = window.setTimeout(() => {
+        button.dataset.copyState = "idle";
+        setCopyButtonContent(button, "idle");
+      }, 1800);
+    }
+
+    async function copyGroupText(group, button) {
+      const text = buildGroupText(group);
+      const ok = await writeClipboard(text);
+      showCopyFeedback(button, ok ? "copied" : "error");
+    }
+
+    function averageOf(entries) {
+      if (entries.length === 0) return 0;
+      const sum = entries.reduce((acc, entry) => acc + entry.hours, 0);
+      return sum / entries.length;
+    }
+
+    function isValidEntry(entry) {
+      return (
+        entry &&
+        typeof entry.id === "string" &&
+        typeof entry.hours === "number" &&
+        Number.isFinite(entry.hours)
+      );
+    }
+
+    function loadEntries() {
+      try {
+        const raw = localStorage.getItem(ENTRIES_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter(isValidEntry);
+      } catch {
+        return [];
+      }
+    }
+
+    function loadGroups() {
+      try {
+        const raw = localStorage.getItem(GROUPS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter(
+          (group) =>
+            group &&
+            typeof group.id === "string" &&
+            typeof group.name === "string" &&
+            Array.isArray(group.entries) &&
+            group.entries.every(isValidEntry)
+        );
+      } catch {
+        return [];
+      }
+    }
+
+    function saveEntries() {
+      localStorage.setItem(ENTRIES_KEY, JSON.stringify(storedEntries));
+    }
+
+    function saveGroups() {
+      localStorage.setItem(GROUPS_KEY, JSON.stringify(savedGroups));
+    }
+
+    const form = document.getElementById("calc-form");
+    const resultEl = document.getElementById("result");
+    const storeBtn = document.getElementById("store-btn");
+    const averageBtn = document.getElementById("average-btn");
+    const saveGroupBtn = document.getElementById("save-group-btn");
+    const undoBtn = document.getElementById("undo-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const storedListEl = document.getElementById("stored-list");
+    const storedCountEl = document.getElementById("stored-count");
+    const averageBoxEl = document.getElementById("average-box");
+    const groupsListEl = document.getElementById("groups-list");
+    const groupsCountEl = document.getElementById("groups-count");
+
+    const storedEntries = loadEntries();
+    const savedGroups = loadGroups();
+    const deletedStack = [];
+    let lastCalculated = null;
+    let expandedGroupId = null;
+
+    function renderStored() {
+      storedListEl.innerHTML = "";
+      storedEntries.forEach((entry, index) => {
+        const li = document.createElement("li");
+
+        const indexEl = document.createElement("span");
+        indexEl.textContent = `#${index + 1}`;
+
+        const hoursEl = document.createElement("span");
+        hoursEl.className = "entry-hours";
+        hoursEl.textContent = formatHours(entry.hours);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "btn-delete";
+        deleteBtn.textContent = "Excluir";
+        deleteBtn.addEventListener("click", () => deleteEntry(entry.id));
+
+        li.appendChild(indexEl);
+        li.appendChild(hoursEl);
+        li.appendChild(deleteBtn);
+
+        if (entry.date1 && entry.date2) {
+          const meta = document.createElement("span");
+          meta.className = "entry-meta";
+          meta.textContent = `${entry.date1}  →  ${entry.date2}`;
+          li.appendChild(meta);
+        }
+
+        storedListEl.appendChild(li);
+      });
+
+      storedCountEl.textContent = `${storedEntries.length} ${storedEntries.length === 1 ? "valor" : "valores"}`;
+      const hasStored = storedEntries.length > 0;
+      averageBtn.disabled = !hasStored;
+      saveGroupBtn.disabled = !hasStored;
+      clearBtn.disabled = !hasStored;
+      undoBtn.disabled = deletedStack.length === 0;
+    }
+
+    function renderGroups() {
+      groupsListEl.innerHTML = "";
+      groupsCountEl.textContent = `${savedGroups.length} ${savedGroups.length === 1 ? "grupo" : "grupos"}`;
+
+      savedGroups.forEach((group) => {
+        const li = document.createElement("li");
+        li.className = "group-card";
+
+        const top = document.createElement("div");
+        top.className = "group-card-top";
+
+        const info = document.createElement("div");
+        const nameEl = document.createElement("p");
+        nameEl.className = "group-name";
+        nameEl.textContent = group.name;
+
+        const summary = document.createElement("p");
+        summary.className = "group-summary";
+        summary.textContent = `${group.entries.length} ${group.entries.length === 1 ? "valor" : "valores"} · média ${formatHours(group.average)} · ${formatSavedAt(group.savedAt)}`;
+
+        info.appendChild(nameEl);
+        info.appendChild(summary);
+
+        const actions = document.createElement("div");
+        actions.className = "group-actions";
+
+        const viewBtn = document.createElement("button");
+        viewBtn.type = "button";
+        viewBtn.className = "btn-tiny";
+        viewBtn.textContent = expandedGroupId === group.id ? "Ocultar" : "Ver";
+        viewBtn.addEventListener("click", () => {
+          expandedGroupId = expandedGroupId === group.id ? null : group.id;
+          renderGroups();
+        });
+
+        const loadBtn = document.createElement("button");
+        loadBtn.type = "button";
+        loadBtn.className = "btn-tiny";
+        loadBtn.textContent = "Carregar";
+        loadBtn.addEventListener("click", () => loadGroup(group.id));
+
+        const exportBtn = document.createElement("button");
+        exportBtn.type = "button";
+        exportBtn.className = "btn-tiny";
+        exportBtn.textContent = "Exportar";
+        exportBtn.addEventListener("click", () => exportGroupTxt(group));
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "btn-tiny btn-copy";
+        copyBtn.dataset.copyState = "idle";
+        setCopyButtonContent(copyBtn, "idle");
+        copyBtn.addEventListener("click", () => copyGroupText(group, copyBtn));
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "btn-delete";
+        deleteBtn.textContent = "Excluir";
+        deleteBtn.addEventListener("click", () => deleteGroup(group.id));
+
+        actions.appendChild(viewBtn);
+        actions.appendChild(loadBtn);
+        actions.appendChild(exportBtn);
+        actions.appendChild(copyBtn);
+        actions.appendChild(deleteBtn);
+
+        top.appendChild(info);
+        top.appendChild(actions);
+        li.appendChild(top);
+
+        const details = document.createElement("div");
+        details.className = "group-details";
+        if (expandedGroupId !== group.id) {
+          details.hidden = true;
+        }
+
+        const entriesUl = document.createElement("ul");
+        entriesUl.className = "group-entries";
+        group.entries.forEach((entry, index) => {
+          const entryLi = document.createElement("li");
+          const indexEl = document.createElement("span");
+          indexEl.textContent = `#${index + 1}`;
+          const hoursEl = document.createElement("span");
+          hoursEl.className = "entry-hours";
+          hoursEl.textContent = formatHours(entry.hours);
+          entryLi.appendChild(indexEl);
+          entryLi.appendChild(hoursEl);
+          if (entry.date1 && entry.date2) {
+            const meta = document.createElement("span");
+            meta.className = "entry-meta";
+            meta.textContent = `${entry.date1}  →  ${entry.date2}`;
+            entryLi.appendChild(meta);
+          }
+          entriesUl.appendChild(entryLi);
+        });
+        details.appendChild(entriesUl);
+        li.appendChild(details);
+
+        groupsListEl.appendChild(li);
+      });
+    }
+
+    function deleteEntry(id) {
+      const index = storedEntries.findIndex((entry) => entry.id === id);
+      if (index === -1) return;
+
+      const [removed] = storedEntries.splice(index, 1);
+      deletedStack.push({ entry: removed, index });
+      saveEntries();
+      averageBoxEl.innerHTML = "";
+      renderStored();
+    }
+
+    function loadGroup(id) {
+      const group = savedGroups.find((item) => item.id === id);
+      if (!group) return;
+
+      if (storedEntries.length > 0) {
+        const confirmed = window.confirm(
+          "Isso substitui a lista atual de armazenadas pelo grupo selecionado. Continuar?"
+        );
+        if (!confirmed) return;
+      }
+
+      storedEntries.length = 0;
+      group.entries.forEach((entry) => {
+        storedEntries.push({
+          id: crypto.randomUUID(),
+          hours: entry.hours,
+          date1: entry.date1 || "",
+          date2: entry.date2 || "",
+        });
+      });
+      deletedStack.length = 0;
+      saveEntries();
+      averageBoxEl.innerHTML = "";
+      renderStored();
+    }
+
+    function deleteGroup(id) {
+      const index = savedGroups.findIndex((group) => group.id === id);
+      if (index === -1) return;
+
+      const group = savedGroups[index];
+      const confirmed = window.confirm(
+        `Excluir o grupo “${group.name}”? Essa ação não pode ser desfeita.`
+      );
+      if (!confirmed) return;
+
+      savedGroups.splice(index, 1);
+      if (expandedGroupId === id) expandedGroupId = null;
+      saveGroups();
+      renderGroups();
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const raw1 = document.getElementById("date1").value;
+      const raw2 = document.getElementById("date2").value;
+
+      const date1 = parseDateTime(raw1);
+      const date2 = parseDateTime(raw2);
+
+      if (!date1 || !date2) {
+        lastCalculated = null;
+        storeBtn.disabled = true;
+        resultEl.innerHTML =
+          '<p class="result-error">Formato inválido. Use mm-dd-yy hh:mm (ex.: 03-15-26 14:30) ou hh:mm dd/mm/yy (ex.: 14:03 30/09/26).</p>';
+        return;
+      }
+
+      const newer = Math.max(date1.getTime(), date2.getTime());
+      const older = Math.min(date1.getTime(), date2.getTime());
+      lastCalculated = {
+        hours: (newer - older) / 3600000,
+        date1: raw1.trim(),
+        date2: raw2.trim(),
+      };
+      storeBtn.disabled = false;
+
+      resultEl.innerHTML =
+        '<p class="result-label">Diferença</p>' +
+        `<p class="result-value">${formatHours(lastCalculated.hours)}</p>`;
+    });
+
+    storeBtn.addEventListener("click", () => {
+      if (!lastCalculated) return;
+
+      storedEntries.push({
+        id: crypto.randomUUID(),
+        hours: lastCalculated.hours,
+        date1: lastCalculated.date1,
+        date2: lastCalculated.date2,
+      });
+      saveEntries();
+      renderStored();
+      averageBoxEl.innerHTML = "";
+    });
+
+    averageBtn.addEventListener("click", () => {
+      if (storedEntries.length === 0) return;
+
+      averageBoxEl.innerHTML =
+        '<p class="result-label">Média aritmética</p>' +
+        `<p class="result-value">${formatHours(averageOf(storedEntries))}</p>`;
+    });
+
+    saveGroupBtn.addEventListener("click", () => {
+      if (storedEntries.length === 0) return;
+
+      const name = window.prompt("Nome do grupo (ex.: Turma A — março):");
+      if (name === null) return;
+
+      const trimmed = name.trim();
+      if (!trimmed) {
+        window.alert("Digite um nome para o grupo.");
+        return;
+      }
+
+      const entriesCopy = storedEntries.map((entry) => ({
+        id: entry.id,
+        hours: entry.hours,
+        date1: entry.date1 || "",
+        date2: entry.date2 || "",
+      }));
+
+      savedGroups.unshift({
+        id: crypto.randomUUID(),
+        name: trimmed,
+        savedAt: new Date().toISOString(),
+        average: averageOf(entriesCopy),
+        entries: entriesCopy,
+      });
+      saveGroups();
+      renderGroups();
+    });
+
+    undoBtn.addEventListener("click", () => {
+      if (deletedStack.length === 0) return;
+
+      const { entry, index } = deletedStack.pop();
+      const insertAt = Math.min(index, storedEntries.length);
+      storedEntries.splice(insertAt, 0, entry);
+      saveEntries();
+      averageBoxEl.innerHTML = "";
+      renderStored();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (storedEntries.length === 0) return;
+
+      const confirmed = window.confirm(
+        "Tem certeza que deseja limpar o histórico? Essa ação não pode ser desfeita."
+      );
+      if (!confirmed) return;
+
+      storedEntries.length = 0;
+      deletedStack.length = 0;
+      saveEntries();
+      averageBoxEl.innerHTML = "";
+      renderStored();
+    });
+
+    renderStored();
+    renderGroups();
+  </script>
+</body>
+</html>
